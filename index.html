@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RADIANTE SMP | LENDÁRIO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Roboto:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff41; /* Verde Matrix/Minecraft */
+            --secondary: #008f11;
+            --accent: #adff2f;
+            --dark-bg: #050505;
+            --card-bg: rgba(10, 10, 10, 0.85);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark-bg);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* TELA DE CARREGAMENTO */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+        }
+        .cube {
+            width: 40px; height: 40px;
+            background: var(--primary);
+            animation: cubeRotation 1.2s infinite ease-in-out;
+        }
+        @keyframes cubeRotation {
+            0% { transform: perspective(120px) rotateX(0deg) rotateY(0deg); }
+            50% { transform: perspective(120px) rotateX(-180deg) rotateY(0deg); }
+            100% { transform: perspective(120px) rotateX(-180deg) rotateY(-180deg); }
+        }
+
+        /* FUNDO DE PARTÍCULAS (MATRIX/SNOW MIX) */
+        canvas#bgCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: -1;
+        }
+
+        /* HEADER ULTRA PERSONALIZADO */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle, rgba(0,255,65,0.1) 0%, transparent 70%);
+        }
+
+        .logo-container {
+            position: relative;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 15vw, 7rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            color: #fff;
+            text-shadow: 0 0 20px var(--primary), 0 0 40px var(--secondary);
+            margin: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* SISTEMA DE ABAS ESTILO CYBERPUNK */
+        .main-nav {
+            margin-top: 50px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .tab-trigger {
+            padding: 15px 30px;
+            border: 1px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .tab-trigger:hover, .tab-trigger.active {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 30px var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* CONTEÚDO DAS ABAS */
+        .content-section {
+            width: 100%;
+            padding: 100px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tab-pane {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            padding: 50px;
+            border-radius: 5px;
+            border: 1px solid rgba(0,255,65,0.3);
+            position: relative;
+            backdrop-filter: blur(15px);
+            animation: slideUp 0.6s forwards;
+        }
+
+        .tab-pane.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ELEMENTOS INTERNOS */
+        .ip-card {
+            font-size: 2.5rem;
+            color: var(--primary);
+            background: #000;
+            padding: 30px;
+            border: 2px solid var(--primary);
+            margin: 20px 0;
+            display: inline-block;
+            box-shadow: inset 0 0 15px var(--secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ip-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            to { left: 100%; }
+        }
+
+        .discord-mega-btn {
+            background: #5865F2;
+            color: #fff;
+            padding: 25px 50px;
+            font-size: 1.5rem;
+            text-decoration: none;
+            font-weight: 900;
+            border-radius: 50px;
+            display: inline-block;
+            transition: 0.5s;
+            box-shadow: 0 0 20px #5865F2;
+            border: 4px solid transparent;
+        }
+
+        .discord-mega-btn:hover {
+            border-color: #fff;
+            transform: rotate(-2deg) scale(1.1);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-item {
+            padding: 20px;
+            border: 1px solid #333;
+            background: rgba(255,255,255,0.02);
+        }
+
+        footer {
+            padding: 50px;
+            text-align: center;
+            border-top: 1px solid #111;
+            font-size: 0.8rem;
+            letter-spacing: 5px;
+            color: #444;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="loader"><div class="cube"></div></div>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <header>
+        <div class="logo-container">
+            <h1>RADIANTE</h1>
+        </div>
+        <p style="letter-spacing: 8px; color: var(--primary); font-weight: bold;">SURVIVAL SMP • 1.21.X</p>
+
+        <nav class="main-nav">
+            <button class="tab-trigger active" onclick="openTab(event, 'ip')">CONEXÃO</button>
+            <button class="tab-trigger" onclick="openTab(event, 'info')">SISTEMA</button>
+            <button class="tab-trigger" onclick="openTab(event, 'desc')">MISSÃO</button>
+            <button class="tab-trigger" onclick="openTab(event, 'social')">DISCORD</button>
+        </nav>
+    </header>
+
+    <section class="content-section">
+        <div id="ip" class="tab-pane active">
+            <h2 style="font-family: Orbitron; margin-bottom: 20px;">> ACESSO_AO_MAINFRAME</h2>
+            <p>Clique no endereço para copiar e iniciar a sincronização:</p>
+            <div class="ip-card" onclick="copyIP()">radiantesmp.srv.br.net</div>
+            <p id="copyAlert" style="color: yellow; font-weight: bold; margin-top: 10px; visibility: hidden;">IP COPIADO COM SUCESSO!</p>
+        </div>
+
+        <div id="info" class="tab-pane">
+            <h2 style="font-family: Orbitron;">ESPECIFICAÇÕES</h2>
+            <div class="stat-grid">
+                <div class="stat-item"><h3>VERSÃO</h3><p>1.21 → Atual</p></div>
+                <div class="stat-item"><h3>LAG</h3><p>0% Optimized</p></div>
+                <div class="stat-item"><h3>MODO</h3><p>Survival Pro</p></div>
+                <div class="stat-item"><h3>UPTIME</h3><p>24/7 Online</p></div>
+            </div>
+        </div>
+
+        <div id="desc" class="tab-pane">
+            <h2 style="font-family: Orbitron;">DIRETRIZES DO PROJETO</h2>
+            <p style="font-size: 1.3rem; line-height: 2; margin-top: 20px;">
+                O <strong>Radiante SMP</strong> não é apenas um servidor. É um ecossistema digital focado na liberdade do jogador. Começamos agora com hardware de ponta para garantir que sua construção nunca sofra com o tempo. 
+                <br><br>
+                <span style="color: var(--primary);">O mundo é seu. A regra é brilhar.</span>
+            </p>
+        </div>
+
+        <div id="social" class="tab-pane">
+            <h2 style="font-family: Orbitron;">CONEXÃO NEURAL</h2>
+            <p>Entre na central de comando da nossa comunidade:</p><br><br>
+            <a href="https://discord.gg/HNGkGYb23d" target="_blank" class="discord-mega-btn">SYNC DISCORD</a>
+        </div>
+    </section>
+
+    <footer>RADIANTE SMP // PROTOCOLO 2026 // NO LIMITS</footer>
+
+    <script>
+        // Remover Loader
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').remove(), 1000);
+            }, 1000);
+        }
+
+        // Sistema de Abas
+        function openTab(evt, tabName) {
+            const panes = document.querySelectorAll('.tab-pane');
+            const triggers = document.querySelectorAll('.tab-trigger');
+            panes.forEach(p => p.classList.remove('active'));
+            triggers.forEach(t => t.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+            window.scrollTo({ top: document.querySelector('.content-section').offsetTop - 50, behavior: 'smooth' });
+        }
+
+        // Copiar IP
+        function copyIP() {
+            navigator.clipboard.writeText("radiantesmp.srv.br.net");
+            const alert = document.getElementById('copyAlert');
+            alert.style.visibility = 'visible';
+            setTimeout(() => alert.style.visibility = 'hidden', 2000);
+        }
+
+        // BACKGROUND DE PARTÍCULAS (MATRIX + NEVE)
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.onresize = resize;
+        resize();
+
+        class Particle {
+            constructor() {
+                this.init();
+            }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.speed = Math.random() * 2 + 0.5;
+                this.size = Math.random() * 2;
+                this.color = Math.random() > 0.5 ? '#00ff41' : '#fff';
+            }
+            update() {
+                this.y += this.speed;
+                if (this.y > canvas.height) this.y = -10;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 150; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
